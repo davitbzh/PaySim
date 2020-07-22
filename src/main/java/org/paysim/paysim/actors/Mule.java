@@ -11,7 +11,7 @@ public class Mule extends Client {
         this.overdraftLimit = 0;
     }
 
-    void fraudulentCashOut(PaySim paysim, int step, double amount) {
+    void fraudulentCashOut(PaySim paysim, int step, double amount) throws Exception {
         String action = "CASH_OUT";
 
         Merchant merchantTo = paysim.pickRandomMerchant();
@@ -28,6 +28,7 @@ public class Mule extends Client {
         Transaction t = new Transaction(step, action, amount, nameOrig, oldBalanceOrig,
                 newBalanceOrig, nameDest, oldBalanceDest, newBalanceDest);
         t.setFraud(this.isFraud());
-        paysim.getTransactions().add(t);
+//        paysim.getTransactions().add(t);
+        paysim.sendTransactiontoKafka(t);
     }
 }

@@ -68,7 +68,11 @@ public class Client extends SuperActor implements Steppable {
                 StepActionProfile stepAmountProfile = paySim.getStepAction(action);
                 double amount = pickAmount(random, action, stepAmountProfile);
 
-                makeTransaction(paySim, step, action, amount);
+                try {
+                    makeTransaction(paySim, step, action, amount);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
@@ -176,7 +180,7 @@ public class Client extends SuperActor implements Steppable {
         return amount;
     }
 
-    private void makeTransaction(PaySim state, int step, String action, double amount) {
+    private void makeTransaction(PaySim state, int step, String action, double amount) throws Exception {
         switch (action) {
             case CASH_IN:
                 handleCashIn(state, step, amount);
@@ -211,7 +215,7 @@ public class Client extends SuperActor implements Steppable {
         }
     }
 
-    protected void handleCashIn(PaySim paysim, int step, double amount) {
+    protected void handleCashIn(PaySim paysim, int step, double amount) throws Exception {
         Merchant merchantTo = paysim.pickRandomMerchant();
         String nameOrig = this.getName();
         String nameDest = merchantTo.getName();
@@ -225,10 +229,11 @@ public class Client extends SuperActor implements Steppable {
 
         Transaction t = new Transaction(step, CASH_IN, amount, nameOrig, oldBalanceOrig,
                 newBalanceOrig, nameDest, oldBalanceDest, newBalanceDest);
-        paysim.getTransactions().add(t);
+//        paysim.getTransactions().add(t);
+        paysim.sendTransactiontoKafka(t);
     }
 
-    protected void handleCashOut(PaySim paysim, int step, double amount) {
+    protected void handleCashOut(PaySim paysim, int step, double amount) throws Exception {
         Merchant merchantTo = paysim.pickRandomMerchant();
         String nameOrig = this.getName();
         String nameDest = merchantTo.getName();
@@ -245,10 +250,11 @@ public class Client extends SuperActor implements Steppable {
 
         t.setUnauthorizedOverdraft(isUnauthorizedOverdraft);
         t.setFraud(this.isFraud());
-        paysim.getTransactions().add(t);
+//        paysim.getTransactions().add(t);
+        paysim.sendTransactiontoKafka(t);
     }
 
-    protected void handleDebit(PaySim paysim, int step, double amount) {
+    protected void handleDebit(PaySim paysim, int step, double amount) throws Exception {
         String nameOrig = this.getName();
         String nameDest = this.bank.getName();
         double oldBalanceOrig = this.getBalance();
@@ -263,10 +269,11 @@ public class Client extends SuperActor implements Steppable {
                 newBalanceOrig, nameDest, oldBalanceDest, newBalanceDest);
 
         t.setUnauthorizedOverdraft(isUnauthorizedOverdraft);
-        paysim.getTransactions().add(t);
+//        paysim.getTransactions().add(t);
+        paysim.sendTransactiontoKafka(t);
     }
 
-    protected void handlePayment(PaySim paysim, int step, double amount) {
+    protected void handlePayment(PaySim paysim, int step, double amount) throws Exception {
         Merchant merchantTo = paysim.pickRandomMerchant();
 
         String nameOrig = this.getName();
@@ -286,10 +293,11 @@ public class Client extends SuperActor implements Steppable {
                 newBalanceOrig, nameDest, oldBalanceDest, newBalanceDest);
 
         t.setUnauthorizedOverdraft(isUnauthorizedOverdraft);
-        paysim.getTransactions().add(t);
+//        paysim.getTransactions().add(t);
+        paysim.sendTransactiontoKafka(t);
     }
 
-    protected boolean handleTransfer(PaySim paysim, int step, double amount, Client clientTo) {
+    protected boolean handleTransfer(PaySim paysim, int step, double amount, Client clientTo) throws Exception {
         String nameOrig = this.getName();
         String nameDest = clientTo.getName();
         double oldBalanceOrig = this.getBalance();
@@ -311,7 +319,8 @@ public class Client extends SuperActor implements Steppable {
 
             t.setUnauthorizedOverdraft(isUnauthorizedOverdraft);
             t.setFraud(this.isFraud());
-            paysim.getTransactions().add(t);
+//        paysim.getTransactions().add(t);
+            paysim.sendTransactiontoKafka(t);
         } else { // create the transaction but don't move any money as the transaction was detected as fraudulent
             transferSuccessful = false;
             double newBalanceOrig = this.getBalance();
@@ -322,12 +331,13 @@ public class Client extends SuperActor implements Steppable {
 
             t.setFlaggedFraud(true);
             t.setFraud(this.isFraud());
-            paysim.getTransactions().add(t);
+//        paysim.getTransactions().add(t);
+            paysim.sendTransactiontoKafka(t);
         }
         return transferSuccessful;
     }
 
-    protected void handleDeposit(PaySim paysim, int step, double amount) {
+    protected void handleDeposit(PaySim paysim, int step, double amount) throws Exception {
         String nameOrig = this.getName();
         String nameDest = this.bank.getName();
         double oldBalanceOrig = this.getBalance();
@@ -341,7 +351,8 @@ public class Client extends SuperActor implements Steppable {
         Transaction t = new Transaction(step, DEPOSIT, amount, nameOrig, oldBalanceOrig,
                 newBalanceOrig, nameDest, oldBalanceDest, newBalanceDest);
 
-        paysim.getTransactions().add(t);
+//        paysim.getTransactions().add(t);
+        paysim.sendTransactiontoKafka(t);
     }
 
     private boolean isDetectedAsFraud(double amount) {

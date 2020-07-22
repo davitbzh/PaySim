@@ -113,4 +113,36 @@ public class Transaction implements Serializable {
 
         return String.join(Output.OUTPUT_SEPARATOR, properties);
     }
+
+    public static Transaction fromString(String line) {
+
+        String[] tokens = line.split(Output.OUTPUT_SEPARATOR);
+        if (tokens.length != 12) {
+            throw new RuntimeException("Invalid record: " + line);
+        }
+
+        int step = Integer.parseInt(tokens[0]);
+        String action = tokens[1];
+        double amount = Double.parseDouble(tokens[2]);
+        String nameOrig = tokens[3];
+        double oldBalanceOrig = Double.parseDouble(tokens[4]);
+        double newBalanceOrig = Double.parseDouble(tokens[5]);
+        String nameDest = tokens[6];
+        double oldBalanceDest = Double.parseDouble(tokens[7]);
+        double newBalanceDest = Double.parseDouble(tokens[8]);
+        boolean isFraud = Boolean.parseBoolean(tokens[9]);
+        boolean isFlaggedFraud = Boolean.parseBoolean(tokens[10]);
+        boolean isUnauthorizedOverdraft = Boolean.parseBoolean(tokens[11]);
+
+        Transaction transaction = new Transaction(step, action, amount, nameOrig, oldBalanceOrig,
+        newBalanceOrig, nameDest, oldBalanceDest, newBalanceDest);
+
+        transaction.setFraud(isFraud);
+        transaction.setFlaggedFraud(isFlaggedFraud);
+        transaction.setUnauthorizedOverdraft(isUnauthorizedOverdraft);
+
+        return transaction;
+    }
+
+
 }

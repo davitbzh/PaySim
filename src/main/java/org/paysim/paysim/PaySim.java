@@ -5,6 +5,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import org.paysim.paysim.flink.TransactionProducer;
 import sim.engine.SimState;
 
 import org.paysim.paysim.parameters.*;
@@ -39,6 +40,8 @@ public class PaySim extends SimState {
 
     private Map<ClientActionProfile, Integer> countProfileAssignment = new HashMap<>();
 
+    TransactionProducer transactionproducer = new TransactionProducer();
+
 
     public static void main(String[] args) {
         System.out.println("PAYSIM: Financial Simulator v" + PAYSIM_VERSION);
@@ -53,6 +56,7 @@ public class PaySim extends SimState {
             }
         }
         Parameters.initParameters(propertiesFile);
+
         for (int i = 0; i < nbTimesRepeat; i++) {
             PaySim p = new PaySim();
             p.runSimulation();
@@ -68,11 +72,11 @@ public class PaySim extends SimState {
         Date currentTime = new Date();
         simulationName = "PS_" + dateFormat.format(currentTime) + "_" + seed();
 
-        File simulationFolder = new File(Parameters.outputPath + simulationName);
-        simulationFolder.mkdirs();
-
-        Output.initOutputFilenames(simulationName);
-        Output.writeParameters(seed());
+//        File simulationFolder = new File(Parameters.outputPath + simulationName);
+//        simulationFolder.mkdirs();
+//
+//        Output.initOutputFilenames(simulationName);
+//        Output.writeParameters(seed());
     }
 
     private void runSimulation() {
@@ -84,17 +88,20 @@ public class PaySim extends SimState {
         initCounters();
         initActors();
 
-        while ((currentStep = (int) schedule.getSteps()) < Parameters.nbSteps) {
-            if (!schedule.step(this))
-                break;
+//        //----------------------------------------------------------------------------
+//        while ((currentStep = (int) schedule.getSteps()) < Parameters.nbSteps) {
+//            if (!schedule.step(this))
+//                break;
+//
+//            writeOutputStep();
+//            if (currentStep % 100 == 100 - 1) {
+//                System.out.println("Step " + currentStep);
+//            } else {
+//                System.out.print("*");
+//            }
+//        }
+//        //----------------------------------------------------------------------------
 
-            writeOutputStep();
-            if (currentStep % 100 == 100 - 1) {
-                System.out.println("Step " + currentStep);
-            } else {
-                System.out.print("*");
-            }
-        }
         System.out.println();
         System.out.println("Finished running " + currentStep + " steps ");
         finish();
@@ -174,26 +181,26 @@ public class PaySim extends SimState {
         Output.writeSummarySimulation(this);
     }
 
-    private void resetVariables() {
-        if (transactions.size() > 0) {
-            stepParticipated++;
-        }
-        transactions = new ArrayList<>();
-    }
+//    private void resetVariables() {
+//        if (transactions.size() > 0) {
+//            stepParticipated++;
+//        }
+//        transactions = new ArrayList<>();
+//    }
 
-    private void writeOutputStep() {
-        ArrayList<Transaction> transactions = getTransactions();
-
-        totalTransactionsMade += transactions.size();
-
-        Output.incrementalWriteRawLog(currentStep, transactions);
-        if (Parameters.saveToDB) {
-            Output.writeDatabaseLog(Parameters.dbUrl, Parameters.dbUser, Parameters.dbPassword, transactions, simulationName);
-        }
-
-        Output.incrementalWriteStepAggregate(currentStep, transactions);
-        resetVariables();
-    }
+//    private void writeOutputStep() {
+//        ArrayList<Transaction> transactions = getTransactions();
+//
+//        totalTransactionsMade += transactions.size();
+//
+//        Output.incrementalWriteRawLog(currentStep, transactions);
+//        if (Parameters.saveToDB) {
+//            Output.writeDatabaseLog(Parameters.dbUrl, Parameters.dbUser, Parameters.dbPassword, transactions, simulationName);
+//        }
+//
+//        Output.incrementalWriteStepAggregate(currentStep, transactions);
+//        resetVariables();
+//    }
 
     public String generateId() {
         final String alphabet = "0123456789";
@@ -232,8 +239,12 @@ public class PaySim extends SimState {
         return stepParticipated;
     }
 
-    public ArrayList<Transaction> getTransactions() {
-        return transactions;
+//    public ArrayList<Transaction> getTransactions() {
+//        return transactions;
+//    }
+
+    public void sendTransactiontoKafka(Transaction transaction) throws Exception {
+        transactionproducer.run("brokers", "inputTopic", transaction);
     }
 
     public ArrayList<Client> getClients() {
