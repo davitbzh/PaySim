@@ -34,12 +34,9 @@ public class TransactionProducer {
     dataKafkaProps.setProperty("ssl.key.password", materialPasswd);
     dataKafkaProps.setProperty("ssl.endpoint.identification.algorithm", "");
 
-
-
     DataStream<Transaction> stream = env.addSource(new TransactionSource(transaction));
 
     Properties properties = new Properties();
-    properties.setProperty("bootstrap.servers", "localhost:9092");
 
     FlinkKafkaProducer<Transaction> myProducer = new FlinkKafkaProducer<Transaction>(
       inputTopic,                 // target topic

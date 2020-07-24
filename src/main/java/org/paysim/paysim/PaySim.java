@@ -96,19 +96,19 @@ public class PaySim extends SimState {
         initCounters();
         initActors(classLoader);
 
-//        //----------------------------------------------------------------------------
-//        while ((currentStep = (int) schedule.getSteps()) < Parameters.nbSteps) {
-//            if (!schedule.step(this))
-//                break;
-//
+        //----------------------------------------------------------------------------
+        while ((currentStep = (int) schedule.getSteps()) < Parameters.nbSteps) {
+            if (!schedule.step(this))
+                break;
+
 //            writeOutputStep();
-//            if (currentStep % 100 == 100 - 1) {
-//                System.out.println("Step " + currentStep);
-//            } else {
-//                System.out.print("*");
-//            }
-//        }
-//        //----------------------------------------------------------------------------
+            if (currentStep % 100 == 100 - 1) {
+                System.out.println("Step " + currentStep);
+            } else {
+                System.out.print("*");
+            }
+        }
+        //----------------------------------------------------------------------------
 
         System.out.println();
         System.out.println("Finished running " + currentStep + " steps ");
@@ -161,7 +161,7 @@ public class PaySim extends SimState {
             clients.add(c);
         }
 
-//        NetworkDrug.createNetwork(this, Parameters.typologiesFolder + TypologiesFiles.drugNetworkOne, classLoader);
+        NetworkDrug.createNetwork(this, Parameters.typologiesFolder + TypologiesFiles.drugNetworkOne, classLoader);
 
         // Do not write code under this part otherwise clients will not be used in simulation
         // Schedule clients to act at each step of the simulation
