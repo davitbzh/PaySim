@@ -21,7 +21,7 @@ import org.paysim.paysim.base.ClientActionProfile;
 import org.paysim.paysim.base.StepActionProfile;
 
 import org.paysim.paysim.output.Output;
-
+//https://towardsdatascience.com/the-art-of-engineering-features-for-a-strong-machine-learning-model-a47a876e654c
 public class PaySim extends SimState {
     public static final double PAYSIM_VERSION = 2.0;
     private static final String[] DEFAULT_ARGS = new String[]{"", "-file", "PaySim.properties", "5"};
@@ -40,26 +40,34 @@ public class PaySim extends SimState {
 
     private Map<ClientActionProfile, Integer> countProfileAssignment = new HashMap<>();
 
+
     TransactionProducer transactionproducer = new TransactionProducer();
 
-
     public static void main(String[] args) {
+
         System.out.println("PAYSIM: Financial Simulator v" + PAYSIM_VERSION);
         if (args.length < 4) {
             args = DEFAULT_ARGS;
         }
         int nbTimesRepeat = Integer.parseInt(args[3]);
+
         String propertiesFile = "";
         for (int x = 0; x < args.length - 1; x++) {
             if (args[x].equals("-file")) {
                 propertiesFile = args[x + 1];
             }
         }
-        Parameters.initParameters(propertiesFile);
 
+        // https://stackoverflow.com/questions/57492083/running-java-jar-with-included-config-via-maven-on-flink-yarn-cluster
+        // http://apache-flink-user-mailing-list-archive.2336050.n4.nabble.com/Linkage-Error-RocksDB-and-flink-1-6-4-td28385.html
+        // add classloader.resolve-order: parent-first to /srv/hops/flink/conf/flink-conf.yaml
+        ClassLoader classLoader = PaySim.class.getClassLoader();
+        Parameters.initParameters(classLoader, classLoader.getResourceAsStream(propertiesFile));
+
+//        Parameters.initParameters(propertiesFile);
         for (int i = 0; i < nbTimesRepeat; i++) {
             PaySim p = new PaySim();
-            p.runSimulation();
+            p.runSimulation(classLoader);
         }
     }
 
@@ -79,14 +87,14 @@ public class PaySim extends SimState {
 //        Output.writeParameters(seed());
     }
 
-    private void runSimulation() {
+    private void runSimulation(ClassLoader classLoader) {
         System.out.println();
         System.out.println("Starting PaySim Running for " + Parameters.nbSteps + " steps.");
         long startTime = System.currentTimeMillis();
         super.start();
 
         initCounters();
-        initActors();
+        initActors(classLoader);
 
 //        //----------------------------------------------------------------------------
 //        while ((currentStep = (int) schedule.getSteps()) < Parameters.nbSteps) {
@@ -104,7 +112,7 @@ public class PaySim extends SimState {
 
         System.out.println();
         System.out.println("Finished running " + currentStep + " steps ");
-        finish();
+//        finish();
 
         double total = System.currentTimeMillis() - startTime;
         total = total / 1000 / 60;
@@ -121,7 +129,7 @@ public class PaySim extends SimState {
         }
     }
 
-    private void initActors() {
+    private void initActors(ClassLoader classLoader) {
         System.out.println("Init - Seed " + seed());
 
         //Add the merchants
@@ -153,7 +161,7 @@ public class PaySim extends SimState {
             clients.add(c);
         }
 
-        NetworkDrug.createNetwork(this, Parameters.typologiesFolder + TypologiesFiles.drugNetworkOne);
+//        NetworkDrug.createNetwork(this, Parameters.typologiesFolder + TypologiesFiles.drugNetworkOne, classLoader);
 
         // Do not write code under this part otherwise clients will not be used in simulation
         // Schedule clients to act at each step of the simulation
@@ -175,11 +183,11 @@ public class PaySim extends SimState {
         return profile;
     }
 
-    public void finish() {
-        Output.writeFraudsters(fraudsters);
-        Output.writeClientsProfiles(countProfileAssignment, (int) (Parameters.nbClients * Parameters.multiplier));
-        Output.writeSummarySimulation(this);
-    }
+//    public void finish() {
+//        Output.writeFraudsters(fraudsters);
+//        Output.writeClientsProfiles(countProfileAssignment, (int) (Parameters.nbClients * Parameters.multiplier));
+//        Output.writeSummarySimulation(this);
+//    }
 
 //    private void resetVariables() {
 //        if (transactions.size() > 0) {
@@ -244,7 +252,8 @@ public class PaySim extends SimState {
 //    }
 
     public void sendTransactiontoKafka(Transaction transaction) throws Exception {
-        transactionproducer.run("brokers", "inputTopic", transaction);
+        System.out.println("*** Sending transaction to kafka");
+        transactionproducer.run(Parameters.kafkaBrockers, Parameters.kafkaTopic, transaction);
     }
 
     public ArrayList<Client> getClients() {
