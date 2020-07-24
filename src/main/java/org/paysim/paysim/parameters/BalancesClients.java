@@ -1,5 +1,6 @@
 package org.paysim.paysim.parameters;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.NavigableMap;
@@ -17,7 +18,7 @@ public class BalancesClients {
     private static RandomCollection<ArrayList<Double>> balanceRangePicker;
     private static final NavigableMap<Double, Double> overdraftLimits = new TreeMap<>();
 
-    public static void initBalanceClients(String filename) {
+    public static void initBalanceClients(InputStream filename) {
         balanceRangePicker = new RandomCollection<>();
         ArrayList<String[]> parameters = CSVReader.read(filename);
         for (String[] paramLine : parameters) {
@@ -29,7 +30,7 @@ public class BalancesClients {
         }
     }
 
-    public static void initOverdraftLimits(String filename){
+    public static void initOverdraftLimits(InputStream filename){
         ArrayList<String[]> parameters = CSVReader.read(filename);
         double valueLow, valueHigh;
         double lastValueHigh = - Double.MAX_VALUE;

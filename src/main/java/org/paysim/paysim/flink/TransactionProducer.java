@@ -10,7 +10,7 @@ import org.apache.commons.io.FileUtils;
 
 import java.util.Properties;
 import java.io.File;
-
+// https://www.alibabacloud.com/blog/using-flink-connectors-correctly_595679
 public class TransactionProducer {
 
   public void run(String brokers, String inputTopic, Transaction transaction) throws Exception {
@@ -42,7 +42,7 @@ public class TransactionProducer {
     properties.setProperty("bootstrap.servers", "localhost:9092");
 
     FlinkKafkaProducer<Transaction> myProducer = new FlinkKafkaProducer<Transaction>(
-      inputTopic,         // target topic
+      inputTopic,                 // target topic
       new TransactionSchema(),    // serialization schema
       properties)                 // producer config
       ;

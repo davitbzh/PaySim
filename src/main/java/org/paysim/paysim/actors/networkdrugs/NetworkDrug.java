@@ -10,9 +10,9 @@ import org.paysim.paysim.utils.RandomCollection;
 import java.util.Map;
 
 public class NetworkDrug {
-    public static void createNetwork(PaySim paySim, String drugNetworkFile) {
+    public static void createNetwork(PaySim paySim, String drugNetworkFile, ClassLoader classLoader) {
         // Load graph file
-        Graph graph = GraphUtils.loadFromFile(drugNetworkFile);
+        Graph graph = GraphUtils.loadFromFile(classLoader, drugNetworkFile);
 
         // Load dealer parameters
         Vertex drugDealer = GraphUtils.getVertex(graph, "DrugDealer");

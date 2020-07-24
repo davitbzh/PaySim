@@ -1,5 +1,6 @@
 package org.paysim.paysim.parameters;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -15,7 +16,7 @@ public class ClientsProfiles {
     private static final int COLUMN_ACTION = 0, COLUMN_LOW = 1, COLUMN_HIGH = 2, COLUMN_AVG = 3, COLUMN_STD = 4, COLUMN_FREQ = 5;
     private Map<String, RandomCollection<ClientActionProfile>> profilePickerPerAction = new HashMap<>();
 
-    public ClientsProfiles(String filename) {
+    public ClientsProfiles(InputStream filename) {
         ArrayList<String[]> parameters = CSVReader.read(filename);
 
         for (String action : ActionTypes.getActions()) {

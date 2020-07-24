@@ -1,5 +1,6 @@
 package org.paysim.paysim.parameters;
 
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -13,7 +14,7 @@ public class ActionTypes {
     private static Set<String> actions = new TreeSet<>();
     private static Map<String, Integer> maxOccurrencesPerAction = new HashMap<>();
 
-    public static void loadActionTypes(String filename) {
+    public static void loadActionTypes(InputStream filename) {
         ArrayList<String[]> parameters = CSVReader.read(filename);
 
         for (String[] paramLine : parameters) {
@@ -22,7 +23,7 @@ public class ActionTypes {
         }
     }
 
-    public static void loadMaxOccurrencesPerClient(String filename) {
+    public static void loadMaxOccurrencesPerClient(InputStream filename) {
         ArrayList<String[]> parameters = CSVReader.read(filename);
         int loaded = 0;
         for (String[] paramLine : parameters) {

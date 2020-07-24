@@ -1,5 +1,6 @@
 package org.paysim.paysim.parameters;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -20,7 +21,7 @@ public class StepsProfiles {
     private ArrayList<Integer> stepTargetCount;
     private int totalTargetCount;
 
-    public StepsProfiles(String filename, double multiplier, int nbSteps) {
+    public StepsProfiles(InputStream filename, double multiplier, int nbSteps) {
         ArrayList<String[]> parameters = CSVReader.read(filename);
 
         profilePerStep = new ArrayList<>();

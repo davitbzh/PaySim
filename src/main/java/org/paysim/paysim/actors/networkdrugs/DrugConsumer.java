@@ -35,7 +35,12 @@ public class DrugConsumer extends Client {
     }
 
     private void handleTransferDealer(PaySim paySim, int step, double amount) {
-        boolean success = handleTransfer(paySim, step, amount, dealer);
+        boolean success = false;
+        try {
+            success = handleTransfer(paySim, step, amount, dealer);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         if (success) {
             dealer.addMoneyFromDrug(amount);

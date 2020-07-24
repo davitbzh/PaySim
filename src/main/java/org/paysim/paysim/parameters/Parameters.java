@@ -1,6 +1,7 @@
 package org.paysim.paysim.parameters;
 
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Properties;
 
@@ -19,21 +20,24 @@ public class Parameters {
     public static StepsProfiles stepsProfiles;
     public static ClientsProfiles clientsProfiles;
 
-    public static void initParameters(String propertiesFile) {
+    public static String kafkaBrockers;
+    public static String kafkaTopic;
+
+    public static void initParameters(ClassLoader classLoader, InputStream propertiesFile) {
         loadPropertiesFile(propertiesFile);
 
-        ActionTypes.loadActionTypes(transactionsTypes);
-        BalancesClients.initBalanceClients(initialBalancesDistribution);
-        BalancesClients.initOverdraftLimits(overdraftLimits);
-        clientsProfiles = new ClientsProfiles(clientsProfilesFile);
-        stepsProfiles = new StepsProfiles(aggregatedTransactions, multiplier, nbSteps);
-        ActionTypes.loadMaxOccurrencesPerClient(maxOccurrencesPerClient);
+        ActionTypes.loadActionTypes(classLoader.getResourceAsStream(transactionsTypes));
+        BalancesClients.initBalanceClients(classLoader.getResourceAsStream(initialBalancesDistribution));
+        BalancesClients.initOverdraftLimits(classLoader.getResourceAsStream(overdraftLimits));
+        clientsProfiles = new ClientsProfiles(classLoader.getResourceAsStream(clientsProfilesFile));
+        stepsProfiles = new StepsProfiles(classLoader.getResourceAsStream(aggregatedTransactions), multiplier, nbSteps);
+        ActionTypes.loadMaxOccurrencesPerClient(classLoader.getResourceAsStream(maxOccurrencesPerClient));
     }
 
-    private static void loadPropertiesFile(String propertiesFile) {
+    private static void loadPropertiesFile(InputStream propertiesFile) {
         try {
             Properties parameters = new Properties();
-            parameters.load(new FileInputStream(propertiesFile));
+            parameters.load(propertiesFile);
 
             seedString = String.valueOf(parameters.getProperty("seed"));
             nbSteps = Integer.parseInt(parameters.getProperty("nbSteps"));
@@ -61,6 +65,10 @@ public class Parameters {
             dbUrl = parameters.getProperty("dbUrl");
             dbUser = parameters.getProperty("dbUser");
             dbPassword = parameters.getProperty("dbPassword");
+
+            kafkaBrockers = parameters.getProperty("kafkaBrockers");
+            kafkaTopic = parameters.getProperty("kafkaTopic");
+
         } catch (Exception e) {
             e.printStackTrace();
         }

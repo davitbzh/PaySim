@@ -12,10 +12,11 @@ import org.apache.tinkerpop.gremlin.tinkergraph.structure.TinkerGraph;
 
 public class GraphUtils {
 
-    public static Graph loadFromFile(String filename) {
+    public static Graph loadFromFile(ClassLoader classLoader, String filename) {
+
         Graph graph = TinkerGraph.open();
         try {
-            InputStream targetStream = new FileInputStream(filename);
+            InputStream targetStream = classLoader.getResourceAsStream(filename);
             GraphMLReader.build().create()
                     .readGraph(targetStream, graph);
         } catch (IOException e) {

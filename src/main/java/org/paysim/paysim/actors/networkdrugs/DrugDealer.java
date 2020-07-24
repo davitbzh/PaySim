@@ -24,7 +24,11 @@ public class DrugDealer extends Client {
 
         if (wantsToCashOutProfit()) {
             double amount = pickAmountCashOutProfit();
-            super.handleCashOut(paySim, step, amount);
+            try {
+                super.handleCashOut(paySim, step, amount);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             drugMoneyInAccount -= amount;
         }
     }

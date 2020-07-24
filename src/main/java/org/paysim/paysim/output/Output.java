@@ -111,25 +111,25 @@ public class Output {
         }
     }
 
-    public static void writeSummarySimulation(PaySim paySim) {
-        StringBuilder errorSummary = new StringBuilder();
-        StepsProfiles simulationStepsProfiles = new StepsProfiles(Output.filenameStepAggregate, 1 / Parameters.multiplier, Parameters.nbSteps);
-        double totalErrorRate = SummaryBuilder.buildSummary(Parameters.stepsProfiles, simulationStepsProfiles, errorSummary);
-
-        try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter(Output.filenameSummary));
-            writer.write(errorSummary.toString());
-            writer.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        String summary = paySim.simulationName + "," + Parameters.nbSteps + "," + paySim.getTotalTransactions() + "," +
-                paySim.getClients().size() + "," + totalErrorRate;
-        writeGlobalSummary(summary);
-
-        System.out.println("Nb of clients: " + paySim.getClients().size() + " - Nb of steps with transactions: " + paySim.getStepParticipated());
-    }
+//    public static void writeSummarySimulation(PaySim paySim) {
+//        StringBuilder errorSummary = new StringBuilder();
+//        StepsProfiles simulationStepsProfiles = new StepsProfiles(Output.filenameStepAggregate, 1 / Parameters.multiplier, Parameters.nbSteps);
+//        double totalErrorRate = SummaryBuilder.buildSummary(Parameters.stepsProfiles, simulationStepsProfiles, errorSummary);
+//
+//        try {
+//            BufferedWriter writer = new BufferedWriter(new FileWriter(Output.filenameSummary));
+//            writer.write(errorSummary.toString());
+//            writer.close();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//
+//        String summary = paySim.simulationName + "," + Parameters.nbSteps + "," + paySim.getTotalTransactions() + "," +
+//                paySim.getClients().size() + "," + totalErrorRate;
+//        writeGlobalSummary(summary);
+//
+//        System.out.println("Nb of clients: " + paySim.getClients().size() + " - Nb of steps with transactions: " + paySim.getStepParticipated());
+//    }
 
     private static void writeGlobalSummary(String summary) {
         String header = "name,steps,nbTransactions,nbClients,totalError";
