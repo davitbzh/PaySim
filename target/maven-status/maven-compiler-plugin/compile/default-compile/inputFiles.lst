@@ -26,6 +26,7 @@
 /Users/davitbz/IdeaProjects/PaySim/src/main/java/org/paysim/paysim/actors/Fraudster.java
 /Users/davitbz/IdeaProjects/PaySim/src/main/java/org/paysim/paysim/parameters/Parameters.java
 /Users/davitbz/IdeaProjects/PaySim/src/main/java/org/paysim/paysim/output/SummaryBuilder.java
+/Users/davitbz/IdeaProjects/PaySim/src/main/java/org/paysim/paysim/flink/TransactionConsumer.java
 /Users/davitbz/IdeaProjects/PaySim/src/main/java/org/paysim/paysim/utils/GraphUtils.java
 /Users/davitbz/IdeaProjects/PaySim/src/main/java/org/paysim/paysim/actors/Mule.java
 /Users/davitbz/IdeaProjects/PaySim/src/main/java/org/paysim/paysim/actors/Client.java

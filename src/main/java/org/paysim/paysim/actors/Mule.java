@@ -11,7 +11,7 @@ public class Mule extends Client {
         this.overdraftLimit = 0;
     }
 
-    void fraudulentCashOut(PaySim paysim, int step, double amount) throws Exception {
+    void fraudulentCashOut(PaySim paysim, int step, double amount){
         String action = "CASH_OUT";
 
         Merchant merchantTo = paysim.pickRandomMerchant();

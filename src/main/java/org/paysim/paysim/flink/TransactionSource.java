@@ -17,9 +17,9 @@ public class TransactionSource implements SourceFunction<Transaction> {
 
     sourceContext.collect(this.transaction);
 
-    while (isRunning) {
-      Thread.sleep(100);
-    }
+//    while (isRunning) {
+//      Thread.sleep(100);
+//    }
 
   }
 

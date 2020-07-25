@@ -43,7 +43,7 @@ public class PaySim extends SimState {
 
     TransactionProducer transactionproducer = new TransactionProducer();
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
 
         System.out.println("PAYSIM: Financial Simulator v" + PAYSIM_VERSION);
         if (args.length < 4) {
@@ -71,7 +71,7 @@ public class PaySim extends SimState {
         }
     }
 
-    public PaySim() {
+    public PaySim() throws Exception {
         super(Parameters.getSeed());
         BalancesClients.setRandom(random);
         Parameters.clientsProfiles.setRandom(random);
@@ -98,6 +98,7 @@ public class PaySim extends SimState {
 
         //----------------------------------------------------------------------------
         while ((currentStep = (int) schedule.getSteps()) < Parameters.nbSteps) {
+            System.out.println(schedule.getSteps());
             if (!schedule.step(this))
                 break;
 
@@ -107,9 +108,9 @@ public class PaySim extends SimState {
             } else {
                 System.out.print("*");
             }
+
         }
         //----------------------------------------------------------------------------
-
         System.out.println();
         System.out.println("Finished running " + currentStep + " steps ");
 //        finish();
@@ -251,9 +252,12 @@ public class PaySim extends SimState {
 //        return transactions;
 //    }
 
-    public void sendTransactiontoKafka(Transaction transaction) throws Exception {
-        System.out.println("*** Sending transaction to kafka");
-        transactionproducer.run(Parameters.kafkaBrockers, Parameters.kafkaTopic, transaction);
+    public void sendTransactiontoKafka(Transaction transaction) {
+        try {
+            transactionproducer.run(Parameters.kafkaBrockers, Parameters.kafkaTopic, transaction);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public ArrayList<Client> getClients() {

@@ -28,31 +28,27 @@ public class Fraudster extends SuperActor implements Steppable {
             c.setFraud(true);
             double balance = c.getBalance();
             // create mule client
-            try {
-                if (balance > 0) {
-                    int nbTransactions = (int) Math.ceil(balance / Parameters.transferLimit);
-                    for (int i = 0; i < nbTransactions; i++) {
-                        boolean transferFailed;
-                        Mule muleClient = new Mule(paysim.generateId(), paysim.pickRandomBank());
-                        muleClient.setFraud(true);
-                        if (balance > Parameters.transferLimit) {
-                            transferFailed = !c.handleTransfer(paysim, step, Parameters.transferLimit, muleClient);
-                            balance -= Parameters.transferLimit;
-                        } else {
-                            transferFailed = !c.handleTransfer(paysim, step, balance, muleClient);
-                            balance = 0;
-                        }
-
-                        profit += muleClient.getBalance();
-                        muleClient.fraudulentCashOut(paysim, step, muleClient.getBalance());
-                        nbVictims++;
-                        paysim.addClient(muleClient);
-                        if (transferFailed)
-                            break;
+            if (balance > 0) {
+                int nbTransactions = (int) Math.ceil(balance / Parameters.transferLimit);
+                for (int i = 0; i < nbTransactions; i++) {
+                    boolean transferFailed;
+                    Mule muleClient = new Mule(paysim.generateId(), paysim.pickRandomBank());
+                    muleClient.setFraud(true);
+                    if (balance > Parameters.transferLimit) {
+                        transferFailed = !c.handleTransfer(paysim, step, Parameters.transferLimit, muleClient);
+                        balance -= Parameters.transferLimit;
+                    } else {
+                        transferFailed = !c.handleTransfer(paysim, step, balance, muleClient);
+                        balance = 0;
                     }
+
+                    profit += muleClient.getBalance();
+                    muleClient.fraudulentCashOut(paysim, step, muleClient.getBalance());
+                    nbVictims++;
+                    paysim.addClient(muleClient);
+                    if (transferFailed)
+                        break;
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
             }
 
             c.setFraud(false);

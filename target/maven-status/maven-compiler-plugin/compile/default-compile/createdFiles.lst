@@ -1,5 +1,6 @@
 org/paysim/paysim/parameters/StepsProfiles.class
 org/paysim/paysim/parameters/ActionTypes.class
+org/paysim/paysim/flink/TransactionConsumer.class
 org/paysim/paysim/actors/networkdrugs/NetworkDrug.class
 org/paysim/paysim/actors/Client.class
 org/paysim/paysim/flink/TransactionProducer.class

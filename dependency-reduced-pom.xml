@@ -67,14 +67,6 @@
       <url>https://jitpack.io</url>
     </repository>
   </repositories>
-  <dependencies>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-simple</artifactId>
-      <version>1.7.25</version>
-      <scope>compile</scope>
-    </dependency>
-  </dependencies>
   <properties>
     <flink.version>1.9.2</flink.version>
     <scala.base>2.11</scala.base>
