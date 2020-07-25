@@ -28,7 +28,7 @@ public class Mule extends Client {
         Transaction t = new Transaction(step, action, amount, nameOrig, oldBalanceOrig,
                 newBalanceOrig, nameDest, oldBalanceDest, newBalanceDest);
         t.setFraud(this.isFraud());
-//        paysim.getTransactions().add(t);
-        paysim.sendTransactiontoKafka(t);
+        paysim.getTransactions().add(t);
+//        paysim.sendTransactiontoKafka(t);
     }
 }

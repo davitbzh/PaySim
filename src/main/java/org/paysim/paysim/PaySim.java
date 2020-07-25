@@ -5,7 +5,10 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import org.apache.flink.streaming.api.TimeCharacteristic;
+import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.paysim.paysim.flink.TransactionProducer;
+import org.paysim.paysim.flink.TransactionsCollectionProducer;
 import sim.engine.SimState;
 
 import org.paysim.paysim.parameters.*;
@@ -41,9 +44,12 @@ public class PaySim extends SimState {
     private Map<ClientActionProfile, Integer> countProfileAssignment = new HashMap<>();
 
 
-    TransactionProducer transactionproducer = new TransactionProducer();
+    //    TransactionProducer transactionproducer = new TransactionProducer();
+    TransactionsCollectionProducer transactionsCollectionProducer = new TransactionsCollectionProducer();
 
     public static void main(String[] args) throws Exception {
+
+       StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
         System.out.println("PAYSIM: Financial Simulator v" + PAYSIM_VERSION);
         if (args.length < 4) {
@@ -61,14 +67,18 @@ public class PaySim extends SimState {
         // https://stackoverflow.com/questions/57492083/running-java-jar-with-included-config-via-maven-on-flink-yarn-cluster
         // http://apache-flink-user-mailing-list-archive.2336050.n4.nabble.com/Linkage-Error-RocksDB-and-flink-1-6-4-td28385.html
         // add classloader.resolve-order: parent-first to /srv/hops/flink/conf/flink-conf.yaml
+
+//        Parameters.initParameters(propertiesFile);
         ClassLoader classLoader = PaySim.class.getClassLoader();
         Parameters.initParameters(classLoader, classLoader.getResourceAsStream(propertiesFile));
 
-//        Parameters.initParameters(propertiesFile);
         for (int i = 0; i < nbTimesRepeat; i++) {
             PaySim p = new PaySim();
-            p.runSimulation(classLoader);
+            p.runSimulation(env, classLoader);
+
+            env.execute();
         }
+
     }
 
     public PaySim() throws Exception {
@@ -87,7 +97,11 @@ public class PaySim extends SimState {
 //        Output.writeParameters(seed());
     }
 
-    private void runSimulation(ClassLoader classLoader) {
+    private void runSimulation(StreamExecutionEnvironment env, ClassLoader classLoader) {
+
+        env.getConfig().enableObjectReuse();
+        env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
+
         System.out.println();
         System.out.println("Starting PaySim Running for " + Parameters.nbSteps + " steps.");
         long startTime = System.currentTimeMillis();
@@ -102,7 +116,7 @@ public class PaySim extends SimState {
             if (!schedule.step(this))
                 break;
 
-//            writeOutputStep();
+            writeOutputStep(env);
             if (currentStep % 100 == 100 - 1) {
                 System.out.println("Step " + currentStep);
             } else {
@@ -113,6 +127,7 @@ public class PaySim extends SimState {
         //----------------------------------------------------------------------------
         System.out.println();
         System.out.println("Finished running " + currentStep + " steps ");
+
 //        finish();
 
         double total = System.currentTimeMillis() - startTime;
@@ -190,26 +205,35 @@ public class PaySim extends SimState {
 //        Output.writeSummarySimulation(this);
 //    }
 
-//    private void resetVariables() {
-//        if (transactions.size() > 0) {
-//            stepParticipated++;
-//        }
-//        transactions = new ArrayList<>();
-//    }
+    private void resetVariables() {
+        if (transactions.size() > 0) {
+            stepParticipated++;
+        }
+        transactions = new ArrayList<>();
+    }
 
-//    private void writeOutputStep() {
-//        ArrayList<Transaction> transactions = getTransactions();
-//
-//        totalTransactionsMade += transactions.size();
-//
+    private void writeOutputStep(StreamExecutionEnvironment env) {
+        ArrayList<Transaction> transactions = getTransactions();
+
+        totalTransactionsMade += transactions.size();
+
+        try {
+            if (transactions.size() >= 1) {
+                transactionsCollectionProducer.run(env, Parameters.kafkaBrockers, Parameters.kafkaTopic, transactions);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
 //        Output.incrementalWriteRawLog(currentStep, transactions);
 //        if (Parameters.saveToDB) {
 //            Output.writeDatabaseLog(Parameters.dbUrl, Parameters.dbUser, Parameters.dbPassword, transactions, simulationName);
 //        }
 //
 //        Output.incrementalWriteStepAggregate(currentStep, transactions);
-//        resetVariables();
-//    }
+
+        resetVariables();
+    }
 
     public String generateId() {
         final String alphabet = "0123456789";
@@ -248,17 +272,17 @@ public class PaySim extends SimState {
         return stepParticipated;
     }
 
-//    public ArrayList<Transaction> getTransactions() {
-//        return transactions;
-//    }
-
-    public void sendTransactiontoKafka(Transaction transaction) {
-        try {
-            transactionproducer.run(Parameters.kafkaBrockers, Parameters.kafkaTopic, transaction);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public ArrayList<Transaction> getTransactions() {
+        return transactions;
     }
+
+//    public void sendTransactiontoKafka(Transaction transaction) {
+//        try {
+//            transactionproducer.run(Parameters.kafkaBrockers, Parameters.kafkaTopic, transaction);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     public ArrayList<Client> getClients() {
         return clients;

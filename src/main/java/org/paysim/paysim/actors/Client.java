@@ -226,8 +226,8 @@ public class Client extends SuperActor implements Steppable {
 
         Transaction t = new Transaction(step, CASH_IN, amount, nameOrig, oldBalanceOrig,
                 newBalanceOrig, nameDest, oldBalanceDest, newBalanceDest);
-//        paysim.getTransactions().add(t);
-        paysim.sendTransactiontoKafka(t);
+        paysim.getTransactions().add(t);
+//        paysim.sendTransactiontoKafka(t);
     }
 
     protected void handleCashOut(PaySim paysim, int step, double amount) {
@@ -247,8 +247,8 @@ public class Client extends SuperActor implements Steppable {
 
         t.setUnauthorizedOverdraft(isUnauthorizedOverdraft);
         t.setFraud(this.isFraud());
-//        paysim.getTransactions().add(t);
-        paysim.sendTransactiontoKafka(t);
+        paysim.getTransactions().add(t);
+//        paysim.sendTransactiontoKafka(t);
     }
 
     protected void handleDebit(PaySim paysim, int step, double amount) {
@@ -266,8 +266,8 @@ public class Client extends SuperActor implements Steppable {
                 newBalanceOrig, nameDest, oldBalanceDest, newBalanceDest);
 
         t.setUnauthorizedOverdraft(isUnauthorizedOverdraft);
-//        paysim.getTransactions().add(t);
-        paysim.sendTransactiontoKafka(t);
+        paysim.getTransactions().add(t);
+//        paysim.sendTransactiontoKafka(t);
     }
 
     protected void handlePayment(PaySim paysim, int step, double amount) {
@@ -290,8 +290,8 @@ public class Client extends SuperActor implements Steppable {
                 newBalanceOrig, nameDest, oldBalanceDest, newBalanceDest);
 
         t.setUnauthorizedOverdraft(isUnauthorizedOverdraft);
-//        paysim.getTransactions().add(t);
-        paysim.sendTransactiontoKafka(t);
+        paysim.getTransactions().add(t);
+//        paysim.sendTransactiontoKafka(t);
     }
 
     protected boolean handleTransfer(PaySim paysim, int step, double amount, Client clientTo){
@@ -316,8 +316,8 @@ public class Client extends SuperActor implements Steppable {
 
             t.setUnauthorizedOverdraft(isUnauthorizedOverdraft);
             t.setFraud(this.isFraud());
-//        paysim.getTransactions().add(t);
-            paysim.sendTransactiontoKafka(t);
+            paysim.getTransactions().add(t);
+//            paysim.sendTransactiontoKafka(t);
         } else { // create the transaction but don't move any money as the transaction was detected as fraudulent
             transferSuccessful = false;
             double newBalanceOrig = this.getBalance();
@@ -328,8 +328,8 @@ public class Client extends SuperActor implements Steppable {
 
             t.setFlaggedFraud(true);
             t.setFraud(this.isFraud());
-//        paysim.getTransactions().add(t);
-            paysim.sendTransactiontoKafka(t);
+            paysim.getTransactions().add(t);
+//            paysim.sendTransactiontoKafka(t);
         }
         return transferSuccessful;
     }
@@ -348,8 +348,8 @@ public class Client extends SuperActor implements Steppable {
         Transaction t = new Transaction(step, DEPOSIT, amount, nameOrig, oldBalanceOrig,
                 newBalanceOrig, nameDest, oldBalanceDest, newBalanceDest);
 
-//        paysim.getTransactions().add(t);
-        paysim.sendTransactiontoKafka(t);
+        paysim.getTransactions().add(t);
+//        paysim.sendTransactiontoKafka(t);
     }
 
     private boolean isDetectedAsFraud(double amount) {
