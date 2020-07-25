@@ -1,4 +1,4 @@
-package org.paysim.paysim.flink;
+package org.paysim.paysim.flink.sources;
 
 import org.apache.flink.streaming.api.functions.source.SourceFunction;
 import org.paysim.paysim.base.Transaction;

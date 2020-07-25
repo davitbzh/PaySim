@@ -1,21 +1,32 @@
-package org.paysim.paysim.flink;
+package org.paysim.paysim.flink.producers;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.flink.streaming.api.TimeCharacteristic;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaProducer;
 import org.paysim.paysim.base.Transaction;
 
-import java.io.File;
-import java.util.ArrayList;
+import org.apache.commons.io.FileUtils;
+import org.paysim.paysim.flink.sources.TransactionSchema;
+import org.paysim.paysim.flink.sources.TransactionSource;
+
 import java.util.Properties;
+import java.io.File;
+// https://www.alibabacloud.com/blog/using-flink-connectors-correctly_595679
+public class TransactionProducer {
 
-public class TransactionsCollectionProducer {
 
+  public TransactionProducer() {
+  }
 
-  public void run(StreamExecutionEnvironment env, String brokers, String inputTopic, ArrayList<Transaction> transactions) throws Exception {
+  public void run(String brokers, String inputTopic, Transaction transaction) throws Exception {
 
+    StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+
+    System.out.println("I am in TransactionProduce...");
+
+    env.getConfig().enableObjectReuse();
+    env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
 
     Properties dataKafkaProps = new Properties();
 
@@ -35,7 +46,7 @@ public class TransactionsCollectionProducer {
     dataKafkaProps.setProperty("group.id", "consumer-group");
 
 
-    DataStream<Transaction> stream = env.fromCollection(transactions);
+    DataStream<Transaction> stream = env.addSource(new TransactionSource(transaction));
 //    DataStream<String> stream = env.addSource(            new SourceFunction<String>() {
 //      volatile boolean running = true;
 //
@@ -62,10 +73,13 @@ public class TransactionsCollectionProducer {
 
     stream.addSink(myProducer);
 
+    env.execute();
+
   }
 
   private String readMaterialPassword() throws Exception {
     return FileUtils.readFileToString(new File("material_passwd"));
   }
+
 
 }

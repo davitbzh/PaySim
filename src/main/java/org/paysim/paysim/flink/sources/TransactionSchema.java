@@ -1,4 +1,4 @@
-package org.paysim.paysim.flink;
+package org.paysim.paysim.flink.sources;
 
 import org.apache.flink.api.common.serialization.DeserializationSchema;
 import org.apache.flink.api.common.serialization.SerializationSchema;

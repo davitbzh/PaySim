@@ -1,14 +1,12 @@
 package org.paysim.paysim;
 
-import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
 import org.apache.flink.streaming.api.TimeCharacteristic;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
-import org.paysim.paysim.flink.TransactionProducer;
-import org.paysim.paysim.flink.TransactionsCollectionProducer;
+import org.paysim.paysim.flink.producers.TransactionsCollectionProducer;
 import sim.engine.SimState;
 
 import org.paysim.paysim.parameters.*;
@@ -23,7 +21,6 @@ import org.paysim.paysim.base.Transaction;
 import org.paysim.paysim.base.ClientActionProfile;
 import org.paysim.paysim.base.StepActionProfile;
 
-import org.paysim.paysim.output.Output;
 //https://towardsdatascience.com/the-art-of-engineering-features-for-a-strong-machine-learning-model-a47a876e654c
 public class PaySim extends SimState {
     public static final double PAYSIM_VERSION = 2.0;
