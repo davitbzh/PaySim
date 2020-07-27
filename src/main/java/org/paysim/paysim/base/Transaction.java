@@ -94,6 +94,8 @@ public class Transaction implements Serializable {
         return newBalanceDest;
     }
 
+    public boolean isUnauthorizedOverdraft() {return isUnauthorizedOverdraft; }
+
     @Override
     public String toString(){
         ArrayList<String> properties = new ArrayList<>();

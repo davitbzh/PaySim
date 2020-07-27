@@ -2,6 +2,7 @@
 /Users/davitbz/IdeaProjects/PaySim/src/main/java/org/paysim/paysim/base/StepActionProfile.java
 /Users/davitbz/IdeaProjects/PaySim/src/main/java/org/paysim/paysim/parameters/ClientsProfiles.java
 /Users/davitbz/IdeaProjects/PaySim/src/main/java/org/paysim/paysim/flink/producers/TransactionProducer.java
+/Users/davitbz/IdeaProjects/PaySim/src/main/java/org/paysim/paysim/flink/sinks/TransactionBucketingSink.java
 /Users/davitbz/IdeaProjects/PaySim/src/main/java/org/paysim/paysim/parameters/ActionTypes.java
 /Users/davitbz/IdeaProjects/PaySim/src/main/java/org/paysim/paysim/base/Transaction.java
 /Users/davitbz/IdeaProjects/PaySim/src/main/java/org/paysim/paysim/actors/Merchant.java
@@ -9,6 +10,7 @@
 /Users/davitbz/IdeaProjects/PaySim/src/main/java/org/paysim/paysim/parameters/BalancesClients.java
 /Users/davitbz/IdeaProjects/PaySim/src/main/java/org/paysim/paysim/actors/SuperActor.java
 /Users/davitbz/IdeaProjects/PaySim/src/main/java/org/paysim/paysim/base/ClientProfile.java
+/Users/davitbz/IdeaProjects/PaySim/src/main/java/org/paysim/paysim/flink/sinks/TransactionCSVSynk.java
 /Users/davitbz/IdeaProjects/PaySim/src/main/java/org/paysim/paysim/flink/consumers/TransactionConsumer.java
 /Users/davitbz/IdeaProjects/PaySim/src/main/java/org/paysim/paysim/output/Aggregator.java
 /Users/davitbz/IdeaProjects/PaySim/src/main/java/org/paysim/paysim/PaySim.java
@@ -19,6 +21,7 @@
 /Users/davitbz/IdeaProjects/PaySim/src/main/java/org/paysim/paysim/utils/DatabaseHandler.java
 /Users/davitbz/IdeaProjects/PaySim/src/main/java/org/paysim/paysim/utils/CSVReader.java
 /Users/davitbz/IdeaProjects/PaySim/src/main/java/org/paysim/paysim/actors/networkdrugs/DrugDealer.java
+/Users/davitbz/IdeaProjects/PaySim/src/main/java/org/paysim/paysim/avro/generated/Transaction.java
 /Users/davitbz/IdeaProjects/PaySim/src/main/java/org/paysim/paysim/actors/networkdrugs/NetworkDrug.java
 /Users/davitbz/IdeaProjects/PaySim/src/main/java/org/paysim/paysim/output/Output.java
 /Users/davitbz/IdeaProjects/PaySim/src/main/java/org/paysim/paysim/actors/Bank.java

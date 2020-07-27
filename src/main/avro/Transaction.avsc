@@ -1,0 +1,20 @@
+ {"namespace": "org.paysim.paysim.avro.generated",
+ "type": "record",
+ "name": "Transaction",
+ "fields": [
+     {"name": "step", "type": "int"},
+     {"name": "action", "type": "string"},
+     {"name": "amount", "type": "double"},
+     {"name": "nameOrig", "type": "string"},
+     {"name": "oldBalanceOrig", "type": "double"},
+     {"name": "newBalanceOrig", "type": "double"},
+     {"name": "nameDest", "type": "string"},
+     {"name": "oldBalanceDest", "type": "double"},
+     {"name": "newBalanceDest", "type": "double"},
+
+     {"name": "isFraud", "type": "boolean"},
+     {"name": "isFlaggedFraud", "type": "boolean"},
+     {"name": "isUnauthorizedOverdraft", "type": "boolean"}
+
+  ]
+}
