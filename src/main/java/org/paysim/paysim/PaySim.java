@@ -225,7 +225,7 @@ public class PaySim extends SimState {
 
         totalTransactionsMade += transactions.size();
 
-        resetVariables();
+//        resetVariables();
     }
 
     public String generateId() {
