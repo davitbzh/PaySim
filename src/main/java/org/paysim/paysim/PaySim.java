@@ -49,7 +49,7 @@ public class PaySim extends SimState {
 //        ClassLoader classLoader = PaySim.class.getClassLoader();
 
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        
+
         Parameters.initParameters(classLoader, classLoader.getResourceAsStream(propertiesFile));
 //        Parameters.initParameters(classLoader, classLoader.getResourceAsStream(propertiesFile));
 
