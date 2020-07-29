@@ -4,9 +4,9 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import org.apache.flink.streaming.api.TimeCharacteristic;
-import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
-import org.paysim.paysim.flink.producers.TransactionsCollectionProducer;
+import org.apache.spark.SparkConf;
+
+import org.xerial.snappy.OSInfo;
 import sim.engine.SimState;
 
 import org.paysim.paysim.parameters.*;
@@ -24,7 +24,6 @@ import org.paysim.paysim.base.StepActionProfile;
 //https://towardsdatascience.com/the-art-of-engineering-features-for-a-strong-machine-learning-model-a47a876e654c
 public class PaySim extends SimState {
     public static final double PAYSIM_VERSION = 2.0;
-    private static final String[] DEFAULT_ARGS = new String[]{"", "-file", "PaySim.properties", "5"};
 
     public final String simulationName;
     private int totalTransactionsMade = 0;
@@ -41,40 +40,23 @@ public class PaySim extends SimState {
     private Map<ClientActionProfile, Integer> countProfileAssignment = new HashMap<>();
 
 
-    //    TransactionProducer transactionproducer = new TransactionProducer();
-    TransactionsCollectionProducer transactionsCollectionProducer = new TransactionsCollectionProducer();
-
-    public static void main(String[] args) throws Exception {
-
-       StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+    public ArrayList<Transaction> run() throws Exception {
 
         System.out.println("PAYSIM: Financial Simulator v" + PAYSIM_VERSION);
-        if (args.length < 4) {
-            args = DEFAULT_ARGS;
-        }
-        int nbTimesRepeat = Integer.parseInt(args[3]);
 
-        String propertiesFile = "";
-        for (int x = 0; x < args.length - 1; x++) {
-            if (args[x].equals("-file")) {
-                propertiesFile = args[x + 1];
-            }
-        }
+        String propertiesFile = "PaySim.properties";
 
-        // https://stackoverflow.com/questions/57492083/running-java-jar-with-included-config-via-maven-on-flink-yarn-cluster
-        // http://apache-flink-user-mailing-list-archive.2336050.n4.nabble.com/Linkage-Error-RocksDB-and-flink-1-6-4-td28385.html
-        // add classloader.resolve-order: parent-first to /srv/hops/flink/conf/flink-conf.yaml
+//        ClassLoader classLoader = PaySim.class.getClassLoader();
 
-//        Parameters.initParameters(propertiesFile);
-        ClassLoader classLoader = PaySim.class.getClassLoader();
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        
         Parameters.initParameters(classLoader, classLoader.getResourceAsStream(propertiesFile));
+//        Parameters.initParameters(classLoader, classLoader.getResourceAsStream(propertiesFile));
 
-        for (int i = 0; i < nbTimesRepeat; i++) {
-            PaySim p = new PaySim();
-            p.runSimulation(env, classLoader);
+        PaySim p = new PaySim();
+        p.runSimulation(classLoader);
 
-            env.execute();
-        }
+        return transactions;
 
     }
 
@@ -94,10 +76,7 @@ public class PaySim extends SimState {
 //        Output.writeParameters(seed());
     }
 
-    private void runSimulation(StreamExecutionEnvironment env, ClassLoader classLoader) {
-
-        env.getConfig().enableObjectReuse();
-        env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
+    private void runSimulation(ClassLoader classLoader) {
 
         System.out.println();
         System.out.println("Starting PaySim Running for " + Parameters.nbSteps + " steps.");
@@ -113,7 +92,7 @@ public class PaySim extends SimState {
             if (!schedule.step(this))
                 break;
 
-            writeOutputStep(env);
+            writeOutputStep();
             if (currentStep % 100 == 100 - 1) {
                 System.out.println("Step " + currentStep);
             } else {
@@ -209,25 +188,10 @@ public class PaySim extends SimState {
         transactions = new ArrayList<>();
     }
 
-    private void writeOutputStep(StreamExecutionEnvironment env) {
+    private void writeOutputStep() {
         ArrayList<Transaction> transactions = getTransactions();
 
         totalTransactionsMade += transactions.size();
-
-        try {
-            if (transactions.size() >= 1) {
-                transactionsCollectionProducer.run(env, Parameters.kafkaBrockers, Parameters.kafkaTopic, transactions);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-//        Output.incrementalWriteRawLog(currentStep, transactions);
-//        if (Parameters.saveToDB) {
-//            Output.writeDatabaseLog(Parameters.dbUrl, Parameters.dbUser, Parameters.dbPassword, transactions, simulationName);
-//        }
-//
-//        Output.incrementalWriteStepAggregate(currentStep, transactions);
 
         resetVariables();
     }

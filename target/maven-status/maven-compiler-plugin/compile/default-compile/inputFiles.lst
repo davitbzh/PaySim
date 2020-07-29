@@ -2,6 +2,7 @@
 /Users/davitbz/IdeaProjects/PaySim/src/main/java/org/paysim/paysim/base/StepActionProfile.java
 /Users/davitbz/IdeaProjects/PaySim/src/main/java/org/paysim/paysim/parameters/ClientsProfiles.java
 /Users/davitbz/IdeaProjects/PaySim/src/main/java/org/paysim/paysim/flink/producers/TransactionProducer.java
+/Users/davitbz/IdeaProjects/PaySim/src/main/java/org/paysim/paysim/spark/StructuredStreamingKafka.java
 /Users/davitbz/IdeaProjects/PaySim/src/main/java/org/paysim/paysim/flink/sinks/TransactionBucketingSink.java
 /Users/davitbz/IdeaProjects/PaySim/src/main/java/org/paysim/paysim/parameters/ActionTypes.java
 /Users/davitbz/IdeaProjects/PaySim/src/main/java/org/paysim/paysim/base/Transaction.java
@@ -18,6 +19,7 @@
 /Users/davitbz/IdeaProjects/PaySim/src/main/java/org/paysim/paysim/flink/producers/TransactionsCollectionProducer.java
 /Users/davitbz/IdeaProjects/PaySim/src/main/java/org/paysim/paysim/base/ClientActionProfile.java
 /Users/davitbz/IdeaProjects/PaySim/src/main/java/org/paysim/paysim/utils/RandomCollection.java
+/Users/davitbz/IdeaProjects/PaySim/src/main/java/org/paysim/paysim/kafka/SampleProducer.java
 /Users/davitbz/IdeaProjects/PaySim/src/main/java/org/paysim/paysim/utils/DatabaseHandler.java
 /Users/davitbz/IdeaProjects/PaySim/src/main/java/org/paysim/paysim/utils/CSVReader.java
 /Users/davitbz/IdeaProjects/PaySim/src/main/java/org/paysim/paysim/actors/networkdrugs/DrugDealer.java
