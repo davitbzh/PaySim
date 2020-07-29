@@ -39,6 +39,8 @@ public class Parameters {
             Properties parameters = new Properties();
             parameters.load(propertiesFile);
 
+            System.out.println("AAA : " + parameters.getProperty("seed"));
+
             seedString = String.valueOf(parameters.getProperty("seed"));
             nbSteps = Integer.parseInt(parameters.getProperty("nbSteps"));
             multiplier = Double.parseDouble(parameters.getProperty("multiplier"));

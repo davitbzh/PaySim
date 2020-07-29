@@ -6,10 +6,19 @@ import java.util.*;
 
 import org.apache.spark.SparkConf;
 
+import org.apache.spark.api.java.JavaRDD;
+import org.apache.spark.api.java.JavaSparkContext;
+import org.apache.spark.api.java.function.Function;
+import org.apache.spark.sql.SQLContext;
 import org.xerial.snappy.OSInfo;
 import sim.engine.SimState;
 
-import org.paysim.paysim.parameters.*;
+//import org.paysim.paysim.parameters.*;
+
+import org.paysim.paysim.parameters.Parameters;
+import org.paysim.paysim.parameters.BalancesClients;
+import org.paysim.paysim.parameters.ActionTypes;
+import org.paysim.paysim.parameters.TypologiesFiles;
 
 import org.paysim.paysim.actors.Bank;
 import org.paysim.paysim.actors.Client;
@@ -37,31 +46,52 @@ public class PaySim extends SimState {
     private ArrayList<Transaction> transactions = new ArrayList<>();
     private int currentStep;
 
+
     private Map<ClientActionProfile, Integer> countProfileAssignment = new HashMap<>();
 
 
-    public ArrayList<Transaction> run() throws Exception {
+    public static void main(String[] args)  throws Exception {
 
-        System.out.println("PAYSIM: Financial Simulator v" + PAYSIM_VERSION);
+        // configure spark
+        SparkConf sparkConf = new SparkConf().setAppName("Print Elements of RDD").setMaster("local[2]");
+        // start a spark context
+        JavaSparkContext sc = new JavaSparkContext(sparkConf);
+        SQLContext sqlContext = new SQLContext(sc);
 
-        String propertiesFile = "PaySim.properties";
+        // sample collection
+        List<Integer> collection = Arrays.asList(1, 2); //, 3, 4, 5, 6, 7, 8, 9, 10
+
+        // parallelize the collection to two partitions
+        JavaRDD<Integer> rdd = sc.parallelize(collection);
+
+
+
+        JavaRDD<Transaction> transactionRDD = rdd.map(new Function<Integer, ArrayList<Transaction>>() {
+            @Override
+            public ArrayList<Transaction> call(Integer integer) throws Exception {
+                String propertiesFile = "PaySim.properties";
 
 //        ClassLoader classLoader = PaySim.class.getClassLoader();
+                ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+                Parameters.initParameters(classLoader, classLoader.getResourceAsStream(propertiesFile));
 
-        Parameters.initParameters(classLoader, classLoader.getResourceAsStream(propertiesFile));
-//        Parameters.initParameters(classLoader, classLoader.getResourceAsStream(propertiesFile));
+                PaySim p = new PaySim();
+                ArrayList<Transaction> results = p.runSimulation(classLoader);
+                return results;
+            };
+        }).flatMap(x -> {
+            return x.iterator();
+        });
 
-        PaySim p = new PaySim();
-        p.runSimulation(classLoader);
-
-        return transactions;
+        sqlContext.createDataFrame(transactionRDD, Transaction.class).show();
 
     }
 
+
     public PaySim() throws Exception {
-        super(Parameters.getSeed());
+//        super(Parameters.getSeed());
+        super(System.currentTimeMillis() % Integer.MAX_VALUE);
         BalancesClients.setRandom(random);
         Parameters.clientsProfiles.setRandom(random);
 
@@ -76,7 +106,7 @@ public class PaySim extends SimState {
 //        Output.writeParameters(seed());
     }
 
-    private void runSimulation(ClassLoader classLoader) {
+    private ArrayList<Transaction> runSimulation(ClassLoader classLoader) {
 
         System.out.println();
         System.out.println("Starting PaySim Running for " + Parameters.nbSteps + " steps.");
@@ -111,6 +141,8 @@ public class PaySim extends SimState {
         System.out.println("It took: " + total + " minutes to execute the simulation");
         System.out.println("Simulation name: " + simulationName);
         System.out.println();
+
+        return transactions;
     }
 
     private void initCounters() {
