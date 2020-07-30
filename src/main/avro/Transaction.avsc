@@ -12,6 +12,7 @@
      {"name": "oldBalanceDest", "type": "double"},
      {"name": "newBalanceDest", "type": "double"},
 
+     {"name": "isFailedTransaction", "type": "boolean"},
      {"name": "isFraud", "type": "boolean"},
      {"name": "isFlaggedFraud", "type": "boolean"},
      {"name": "isUnauthorizedOverdraft", "type": "boolean"}

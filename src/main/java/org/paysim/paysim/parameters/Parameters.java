@@ -76,6 +76,7 @@ public class Parameters {
         }
     }
 
+
     public static int getSeed() {
         // /!\ MASON seed is using an int internally
         // https://github.com/eclab/mason/blob/66d38fa58fae3e250b89cf6f31bcfa9d124ffd41/mason/sim/engine/SimState.java#L45

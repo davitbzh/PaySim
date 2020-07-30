@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import org.paysim.paysim.output.Output;
 
 public class Transaction implements Serializable {
+
     private static final long serialVersionUID = 1L;
     private final int step;
     private final String action;

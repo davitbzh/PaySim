@@ -4,12 +4,18 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import org.apache.avro.Schema;
 import org.apache.spark.SparkConf;
 
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.Function;
+import org.apache.spark.sql.Dataset;
+import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SQLContext;
+import org.apache.spark.sql.SaveMode;
+import org.apache.spark.sql.types.StructType;
+import org.paysim.paysim.spark.StructuredStreamingKafka;
 import org.xerial.snappy.OSInfo;
 import sim.engine.SimState;
 
@@ -29,6 +35,10 @@ import org.paysim.paysim.actors.networkdrugs.NetworkDrug;
 import org.paysim.paysim.base.Transaction;
 import org.paysim.paysim.base.ClientActionProfile;
 import org.paysim.paysim.base.StepActionProfile;
+
+import org.apache.spark.sql.avro.SchemaConverters;
+
+import static org.apache.spark.sql.functions.col;
 
 //https://towardsdatascience.com/the-art-of-engineering-features-for-a-strong-machine-learning-model-a47a876e654c
 public class PaySim extends SimState {
@@ -53,17 +63,16 @@ public class PaySim extends SimState {
     public static void main(String[] args)  throws Exception {
 
         // configure spark
-        SparkConf sparkConf = new SparkConf().setAppName("Print Elements of RDD").setMaster("local[2]");
+        SparkConf sparkConf = new SparkConf().setAppName("Print Elements of RDD"); //.setMaster("local[2]")
         // start a spark context
         JavaSparkContext sc = new JavaSparkContext(sparkConf);
         SQLContext sqlContext = new SQLContext(sc);
 
         // sample collection
-        List<Integer> collection = Arrays.asList(1, 2); //, 3, 4, 5, 6, 7, 8, 9, 10
+        List<Integer> collection = Arrays.asList(1); //, 3, 4, 5, 6, 7, 8, 9, 10
 
         // parallelize the collection to two partitions
         JavaRDD<Integer> rdd = sc.parallelize(collection);
-
 
 
         JavaRDD<Transaction> transactionRDD = rdd.map(new Function<Integer, ArrayList<Transaction>>() {
@@ -71,7 +80,6 @@ public class PaySim extends SimState {
             public ArrayList<Transaction> call(Integer integer) throws Exception {
                 String propertiesFile = "PaySim.properties";
 
-//        ClassLoader classLoader = PaySim.class.getClassLoader();
                 ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 
                 Parameters.initParameters(classLoader, classLoader.getResourceAsStream(propertiesFile));
@@ -80,18 +88,35 @@ public class PaySim extends SimState {
                 ArrayList<Transaction> results = p.runSimulation(classLoader);
                 return results;
             };
-        }).flatMap(x -> {
-            return x.iterator();
-        });
+        }).flatMap(x ->  x.iterator());
 
-        sqlContext.createDataFrame(transactionRDD, Transaction.class).show();
+        Dataset<Row> df = sqlContext.createDataFrame(transactionRDD, Transaction.class);
+
+        df.select(
+          col("step"),
+          col("action"),
+          col("amount"),
+          col("nameOrig"),
+          col("oldBalanceOrig"),
+          col("newBalanceOrig"),
+          col("nameDest"),
+          col("oldBalanceDest"),
+          col("newBalanceDest"),
+          col("failedTransaction"),
+          col("fraud"),
+          col("flaggedFraud"),
+          col("unauthorizedOverdraft"))
+          .write().mode(SaveMode.Overwrite).parquet(args[0]);
+
+//        // TODO:
+//        StructuredStreamingKafka sparksynk = new StructuredStreamingKafka();
+//        sparksynk.run(df, "ip-10-0-0-128.eu-north-1.compute.internal:9091", "transactionsTopic");
 
     }
 
 
     public PaySim() throws Exception {
-//        super(Parameters.getSeed());
-        super(System.currentTimeMillis() % Integer.MAX_VALUE);
+        super(Parameters.getSeed());
         BalancesClients.setRandom(random);
         Parameters.clientsProfiles.setRandom(random);
 
@@ -99,11 +124,7 @@ public class PaySim extends SimState {
         Date currentTime = new Date();
         simulationName = "PS_" + dateFormat.format(currentTime) + "_" + seed();
 
-//        File simulationFolder = new File(Parameters.outputPath + simulationName);
-//        simulationFolder.mkdirs();
-//
-//        Output.initOutputFilenames(simulationName);
-//        Output.writeParameters(seed());
+
     }
 
     private ArrayList<Transaction> runSimulation(ClassLoader classLoader) {
@@ -134,7 +155,6 @@ public class PaySim extends SimState {
         System.out.println();
         System.out.println("Finished running " + currentStep + " steps ");
 
-//        finish();
 
         double total = System.currentTimeMillis() - startTime;
         total = total / 1000 / 60;
@@ -207,25 +227,12 @@ public class PaySim extends SimState {
         return profile;
     }
 
-//    public void finish() {
-//        Output.writeFraudsters(fraudsters);
-//        Output.writeClientsProfiles(countProfileAssignment, (int) (Parameters.nbClients * Parameters.multiplier));
-//        Output.writeSummarySimulation(this);
-//    }
-
-    private void resetVariables() {
-        if (transactions.size() > 0) {
-            stepParticipated++;
-        }
-        transactions = new ArrayList<>();
-    }
 
     private void writeOutputStep() {
         ArrayList<Transaction> transactions = getTransactions();
 
         totalTransactionsMade += transactions.size();
 
-//        resetVariables();
     }
 
     public String generateId() {
@@ -257,29 +264,12 @@ public class PaySim extends SimState {
         return clientDest;
     }
 
-    public int getTotalTransactions() {
-        return totalTransactionsMade;
-    }
-
-    public int getStepParticipated() {
-        return stepParticipated;
-    }
 
     public ArrayList<Transaction> getTransactions() {
         return transactions;
     }
 
-//    public void sendTransactiontoKafka(Transaction transaction) {
-//        try {
-//            transactionproducer.run(Parameters.kafkaBrockers, Parameters.kafkaTopic, transaction);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
 
-    public ArrayList<Client> getClients() {
-        return clients;
-    }
 
     public void addClient(Client c) {
         clients.add(c);

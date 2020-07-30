@@ -34,6 +34,7 @@ org/paysim/paysim/flink/sinks/TransactionParquetSynk$1.class
 org/paysim/paysim/base/ClientActionProfile.class
 org/paysim/paysim/spark/StructuredStreamingKafka.class
 org/paysim/paysim/output/Output.class
+org/paysim/paysim/PaySim$1.class
 org/paysim/paysim/parameters/Parameters.class
 org/paysim/paysim/kafka/SampleProducer.class
 org/paysim/paysim/avro/generated/Transaction$1.class

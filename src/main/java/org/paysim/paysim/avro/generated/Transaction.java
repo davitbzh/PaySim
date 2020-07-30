@@ -13,8 +13,8 @@ import org.apache.avro.message.SchemaStore;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class Transaction extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  private static final long serialVersionUID = 189794088356308208L;
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Transaction\",\"namespace\":\"org.paysim.paysim.avro.generated\",\"fields\":[{\"name\":\"step\",\"type\":\"int\"},{\"name\":\"action\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"amount\",\"type\":\"double\"},{\"name\":\"nameOrig\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"oldBalanceOrig\",\"type\":\"double\"},{\"name\":\"newBalanceOrig\",\"type\":\"double\"},{\"name\":\"nameDest\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"oldBalanceDest\",\"type\":\"double\"},{\"name\":\"newBalanceDest\",\"type\":\"double\"},{\"name\":\"isFraud\",\"type\":\"boolean\"},{\"name\":\"isFlaggedFraud\",\"type\":\"boolean\"},{\"name\":\"isUnauthorizedOverdraft\",\"type\":\"boolean\"}]}");
+  private static final long serialVersionUID = 175173568707850464L;
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Transaction\",\"namespace\":\"org.paysim.paysim.avro.generated\",\"fields\":[{\"name\":\"step\",\"type\":\"int\"},{\"name\":\"action\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"amount\",\"type\":\"double\"},{\"name\":\"nameOrig\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"oldBalanceOrig\",\"type\":\"double\"},{\"name\":\"newBalanceOrig\",\"type\":\"double\"},{\"name\":\"nameDest\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"oldBalanceDest\",\"type\":\"double\"},{\"name\":\"newBalanceDest\",\"type\":\"double\"},{\"name\":\"isFailedTransaction\",\"type\":\"boolean\"},{\"name\":\"isFraud\",\"type\":\"boolean\"},{\"name\":\"isFlaggedFraud\",\"type\":\"boolean\"},{\"name\":\"isUnauthorizedOverdraft\",\"type\":\"boolean\"}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
 
   private static SpecificData MODEL$ = new SpecificData();
@@ -51,18 +51,19 @@ public class Transaction extends org.apache.avro.specific.SpecificRecordBase imp
     return DECODER.decode(b);
   }
 
-   private int step;
-   private java.lang.String action;
-   private double amount;
-   private java.lang.String nameOrig;
-   private double oldBalanceOrig;
-   private double newBalanceOrig;
-   private java.lang.String nameDest;
-   private double oldBalanceDest;
-   private double newBalanceDest;
-   private boolean isFraud;
-   private boolean isFlaggedFraud;
-   private boolean isUnauthorizedOverdraft;
+   public int step;
+   public java.lang.String action;
+   public double amount;
+   public java.lang.String nameOrig;
+   public double oldBalanceOrig;
+   public double newBalanceOrig;
+   public java.lang.String nameDest;
+   public double oldBalanceDest;
+   public double newBalanceDest;
+   public boolean isFailedTransaction;
+   public boolean isFraud;
+   public boolean isFlaggedFraud;
+   public boolean isUnauthorizedOverdraft;
 
   /**
    * Default constructor.  Note that this does not initialize fields
@@ -82,11 +83,12 @@ public class Transaction extends org.apache.avro.specific.SpecificRecordBase imp
    * @param nameDest The new value for nameDest
    * @param oldBalanceDest The new value for oldBalanceDest
    * @param newBalanceDest The new value for newBalanceDest
+   * @param isFailedTransaction The new value for isFailedTransaction
    * @param isFraud The new value for isFraud
    * @param isFlaggedFraud The new value for isFlaggedFraud
    * @param isUnauthorizedOverdraft The new value for isUnauthorizedOverdraft
    */
-  public Transaction(java.lang.Integer step, java.lang.String action, java.lang.Double amount, java.lang.String nameOrig, java.lang.Double oldBalanceOrig, java.lang.Double newBalanceOrig, java.lang.String nameDest, java.lang.Double oldBalanceDest, java.lang.Double newBalanceDest, java.lang.Boolean isFraud, java.lang.Boolean isFlaggedFraud, java.lang.Boolean isUnauthorizedOverdraft) {
+  public Transaction(java.lang.Integer step, java.lang.String action, java.lang.Double amount, java.lang.String nameOrig, java.lang.Double oldBalanceOrig, java.lang.Double newBalanceOrig, java.lang.String nameDest, java.lang.Double oldBalanceDest, java.lang.Double newBalanceDest, java.lang.Boolean isFailedTransaction, java.lang.Boolean isFraud, java.lang.Boolean isFlaggedFraud, java.lang.Boolean isUnauthorizedOverdraft) {
     this.step = step;
     this.action = action;
     this.amount = amount;
@@ -96,6 +98,7 @@ public class Transaction extends org.apache.avro.specific.SpecificRecordBase imp
     this.nameDest = nameDest;
     this.oldBalanceDest = oldBalanceDest;
     this.newBalanceDest = newBalanceDest;
+    this.isFailedTransaction = isFailedTransaction;
     this.isFraud = isFraud;
     this.isFlaggedFraud = isFlaggedFraud;
     this.isUnauthorizedOverdraft = isUnauthorizedOverdraft;
@@ -114,9 +117,10 @@ public class Transaction extends org.apache.avro.specific.SpecificRecordBase imp
     case 6: return nameDest;
     case 7: return oldBalanceDest;
     case 8: return newBalanceDest;
-    case 9: return isFraud;
-    case 10: return isFlaggedFraud;
-    case 11: return isUnauthorizedOverdraft;
+    case 9: return isFailedTransaction;
+    case 10: return isFraud;
+    case 11: return isFlaggedFraud;
+    case 12: return isUnauthorizedOverdraft;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -134,9 +138,10 @@ public class Transaction extends org.apache.avro.specific.SpecificRecordBase imp
     case 6: nameDest = (java.lang.String)value$; break;
     case 7: oldBalanceDest = (java.lang.Double)value$; break;
     case 8: newBalanceDest = (java.lang.Double)value$; break;
-    case 9: isFraud = (java.lang.Boolean)value$; break;
-    case 10: isFlaggedFraud = (java.lang.Boolean)value$; break;
-    case 11: isUnauthorizedOverdraft = (java.lang.Boolean)value$; break;
+    case 9: isFailedTransaction = (java.lang.Boolean)value$; break;
+    case 10: isFraud = (java.lang.Boolean)value$; break;
+    case 11: isFlaggedFraud = (java.lang.Boolean)value$; break;
+    case 12: isUnauthorizedOverdraft = (java.lang.Boolean)value$; break;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -286,6 +291,22 @@ public class Transaction extends org.apache.avro.specific.SpecificRecordBase imp
   }
 
   /**
+   * Gets the value of the 'isFailedTransaction' field.
+   * @return The value of the 'isFailedTransaction' field.
+   */
+  public java.lang.Boolean getIsFailedTransaction() {
+    return isFailedTransaction;
+  }
+
+  /**
+   * Sets the value of the 'isFailedTransaction' field.
+   * @param value the value to set.
+   */
+  public void setIsFailedTransaction(java.lang.Boolean value) {
+    this.isFailedTransaction = value;
+  }
+
+  /**
    * Gets the value of the 'isFraud' field.
    * @return The value of the 'isFraud' field.
    */
@@ -374,6 +395,7 @@ public class Transaction extends org.apache.avro.specific.SpecificRecordBase imp
     private java.lang.String nameDest;
     private double oldBalanceDest;
     private double newBalanceDest;
+    private boolean isFailedTransaction;
     private boolean isFraud;
     private boolean isFlaggedFraud;
     private boolean isUnauthorizedOverdraft;
@@ -425,17 +447,21 @@ public class Transaction extends org.apache.avro.specific.SpecificRecordBase imp
         this.newBalanceDest = data().deepCopy(fields()[8].schema(), other.newBalanceDest);
         fieldSetFlags()[8] = true;
       }
-      if (isValidValue(fields()[9], other.isFraud)) {
-        this.isFraud = data().deepCopy(fields()[9].schema(), other.isFraud);
+      if (isValidValue(fields()[9], other.isFailedTransaction)) {
+        this.isFailedTransaction = data().deepCopy(fields()[9].schema(), other.isFailedTransaction);
         fieldSetFlags()[9] = true;
       }
-      if (isValidValue(fields()[10], other.isFlaggedFraud)) {
-        this.isFlaggedFraud = data().deepCopy(fields()[10].schema(), other.isFlaggedFraud);
+      if (isValidValue(fields()[10], other.isFraud)) {
+        this.isFraud = data().deepCopy(fields()[10].schema(), other.isFraud);
         fieldSetFlags()[10] = true;
       }
-      if (isValidValue(fields()[11], other.isUnauthorizedOverdraft)) {
-        this.isUnauthorizedOverdraft = data().deepCopy(fields()[11].schema(), other.isUnauthorizedOverdraft);
+      if (isValidValue(fields()[11], other.isFlaggedFraud)) {
+        this.isFlaggedFraud = data().deepCopy(fields()[11].schema(), other.isFlaggedFraud);
         fieldSetFlags()[11] = true;
+      }
+      if (isValidValue(fields()[12], other.isUnauthorizedOverdraft)) {
+        this.isUnauthorizedOverdraft = data().deepCopy(fields()[12].schema(), other.isUnauthorizedOverdraft);
+        fieldSetFlags()[12] = true;
       }
     }
 
@@ -481,17 +507,21 @@ public class Transaction extends org.apache.avro.specific.SpecificRecordBase imp
         this.newBalanceDest = data().deepCopy(fields()[8].schema(), other.newBalanceDest);
         fieldSetFlags()[8] = true;
       }
-      if (isValidValue(fields()[9], other.isFraud)) {
-        this.isFraud = data().deepCopy(fields()[9].schema(), other.isFraud);
+      if (isValidValue(fields()[9], other.isFailedTransaction)) {
+        this.isFailedTransaction = data().deepCopy(fields()[9].schema(), other.isFailedTransaction);
         fieldSetFlags()[9] = true;
       }
-      if (isValidValue(fields()[10], other.isFlaggedFraud)) {
-        this.isFlaggedFraud = data().deepCopy(fields()[10].schema(), other.isFlaggedFraud);
+      if (isValidValue(fields()[10], other.isFraud)) {
+        this.isFraud = data().deepCopy(fields()[10].schema(), other.isFraud);
         fieldSetFlags()[10] = true;
       }
-      if (isValidValue(fields()[11], other.isUnauthorizedOverdraft)) {
-        this.isUnauthorizedOverdraft = data().deepCopy(fields()[11].schema(), other.isUnauthorizedOverdraft);
+      if (isValidValue(fields()[11], other.isFlaggedFraud)) {
+        this.isFlaggedFraud = data().deepCopy(fields()[11].schema(), other.isFlaggedFraud);
         fieldSetFlags()[11] = true;
+      }
+      if (isValidValue(fields()[12], other.isUnauthorizedOverdraft)) {
+        this.isUnauthorizedOverdraft = data().deepCopy(fields()[12].schema(), other.isUnauthorizedOverdraft);
+        fieldSetFlags()[12] = true;
       }
     }
 
@@ -841,6 +871,44 @@ public class Transaction extends org.apache.avro.specific.SpecificRecordBase imp
     }
 
     /**
+      * Gets the value of the 'isFailedTransaction' field.
+      * @return The value.
+      */
+    public java.lang.Boolean getIsFailedTransaction() {
+      return isFailedTransaction;
+    }
+
+    /**
+      * Sets the value of the 'isFailedTransaction' field.
+      * @param value The value of 'isFailedTransaction'.
+      * @return This builder.
+      */
+    public org.paysim.paysim.avro.generated.Transaction.Builder setIsFailedTransaction(boolean value) {
+      validate(fields()[9], value);
+      this.isFailedTransaction = value;
+      fieldSetFlags()[9] = true;
+      return this;
+    }
+
+    /**
+      * Checks whether the 'isFailedTransaction' field has been set.
+      * @return True if the 'isFailedTransaction' field has been set, false otherwise.
+      */
+    public boolean hasIsFailedTransaction() {
+      return fieldSetFlags()[9];
+    }
+
+
+    /**
+      * Clears the value of the 'isFailedTransaction' field.
+      * @return This builder.
+      */
+    public org.paysim.paysim.avro.generated.Transaction.Builder clearIsFailedTransaction() {
+      fieldSetFlags()[9] = false;
+      return this;
+    }
+
+    /**
       * Gets the value of the 'isFraud' field.
       * @return The value.
       */
@@ -854,9 +922,9 @@ public class Transaction extends org.apache.avro.specific.SpecificRecordBase imp
       * @return This builder.
       */
     public org.paysim.paysim.avro.generated.Transaction.Builder setIsFraud(boolean value) {
-      validate(fields()[9], value);
+      validate(fields()[10], value);
       this.isFraud = value;
-      fieldSetFlags()[9] = true;
+      fieldSetFlags()[10] = true;
       return this;
     }
 
@@ -865,7 +933,7 @@ public class Transaction extends org.apache.avro.specific.SpecificRecordBase imp
       * @return True if the 'isFraud' field has been set, false otherwise.
       */
     public boolean hasIsFraud() {
-      return fieldSetFlags()[9];
+      return fieldSetFlags()[10];
     }
 
 
@@ -874,7 +942,7 @@ public class Transaction extends org.apache.avro.specific.SpecificRecordBase imp
       * @return This builder.
       */
     public org.paysim.paysim.avro.generated.Transaction.Builder clearIsFraud() {
-      fieldSetFlags()[9] = false;
+      fieldSetFlags()[10] = false;
       return this;
     }
 
@@ -892,9 +960,9 @@ public class Transaction extends org.apache.avro.specific.SpecificRecordBase imp
       * @return This builder.
       */
     public org.paysim.paysim.avro.generated.Transaction.Builder setIsFlaggedFraud(boolean value) {
-      validate(fields()[10], value);
+      validate(fields()[11], value);
       this.isFlaggedFraud = value;
-      fieldSetFlags()[10] = true;
+      fieldSetFlags()[11] = true;
       return this;
     }
 
@@ -903,7 +971,7 @@ public class Transaction extends org.apache.avro.specific.SpecificRecordBase imp
       * @return True if the 'isFlaggedFraud' field has been set, false otherwise.
       */
     public boolean hasIsFlaggedFraud() {
-      return fieldSetFlags()[10];
+      return fieldSetFlags()[11];
     }
 
 
@@ -912,7 +980,7 @@ public class Transaction extends org.apache.avro.specific.SpecificRecordBase imp
       * @return This builder.
       */
     public org.paysim.paysim.avro.generated.Transaction.Builder clearIsFlaggedFraud() {
-      fieldSetFlags()[10] = false;
+      fieldSetFlags()[11] = false;
       return this;
     }
 
@@ -930,9 +998,9 @@ public class Transaction extends org.apache.avro.specific.SpecificRecordBase imp
       * @return This builder.
       */
     public org.paysim.paysim.avro.generated.Transaction.Builder setIsUnauthorizedOverdraft(boolean value) {
-      validate(fields()[11], value);
+      validate(fields()[12], value);
       this.isUnauthorizedOverdraft = value;
-      fieldSetFlags()[11] = true;
+      fieldSetFlags()[12] = true;
       return this;
     }
 
@@ -941,7 +1009,7 @@ public class Transaction extends org.apache.avro.specific.SpecificRecordBase imp
       * @return True if the 'isUnauthorizedOverdraft' field has been set, false otherwise.
       */
     public boolean hasIsUnauthorizedOverdraft() {
-      return fieldSetFlags()[11];
+      return fieldSetFlags()[12];
     }
 
 
@@ -950,7 +1018,7 @@ public class Transaction extends org.apache.avro.specific.SpecificRecordBase imp
       * @return This builder.
       */
     public org.paysim.paysim.avro.generated.Transaction.Builder clearIsUnauthorizedOverdraft() {
-      fieldSetFlags()[11] = false;
+      fieldSetFlags()[12] = false;
       return this;
     }
 
@@ -968,9 +1036,10 @@ public class Transaction extends org.apache.avro.specific.SpecificRecordBase imp
         record.nameDest = fieldSetFlags()[6] ? this.nameDest : (java.lang.String) defaultValue(fields()[6]);
         record.oldBalanceDest = fieldSetFlags()[7] ? this.oldBalanceDest : (java.lang.Double) defaultValue(fields()[7]);
         record.newBalanceDest = fieldSetFlags()[8] ? this.newBalanceDest : (java.lang.Double) defaultValue(fields()[8]);
-        record.isFraud = fieldSetFlags()[9] ? this.isFraud : (java.lang.Boolean) defaultValue(fields()[9]);
-        record.isFlaggedFraud = fieldSetFlags()[10] ? this.isFlaggedFraud : (java.lang.Boolean) defaultValue(fields()[10]);
-        record.isUnauthorizedOverdraft = fieldSetFlags()[11] ? this.isUnauthorizedOverdraft : (java.lang.Boolean) defaultValue(fields()[11]);
+        record.isFailedTransaction = fieldSetFlags()[9] ? this.isFailedTransaction : (java.lang.Boolean) defaultValue(fields()[9]);
+        record.isFraud = fieldSetFlags()[10] ? this.isFraud : (java.lang.Boolean) defaultValue(fields()[10]);
+        record.isFlaggedFraud = fieldSetFlags()[11] ? this.isFlaggedFraud : (java.lang.Boolean) defaultValue(fields()[11]);
+        record.isUnauthorizedOverdraft = fieldSetFlags()[12] ? this.isUnauthorizedOverdraft : (java.lang.Boolean) defaultValue(fields()[12]);
         return record;
       } catch (java.lang.Exception e) {
         throw new org.apache.avro.AvroRuntimeException(e);
